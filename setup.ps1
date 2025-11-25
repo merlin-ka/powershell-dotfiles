@@ -79,6 +79,17 @@ function addToProfile {
     Write-Host "Added to $PROFILE"
 }
 
+function checkPowerShellVersion {
+    $ver = $PSVersionTable.PSVersion.Major * 100 + $PSVersionTable.PSVersion.Minor
+    if ($ver -lt 702) {
+        $verStr = $PSVersionTable.PSVersion.ToString()
+        Write-Host "Error: Minimum supported PowerShell version is 7.2 (current version: $verStr)" -ForegroundColor Red
+        Write-Host "Run 'winget install --id Microsoft.PowerShell' to install the latest version."
+        exit 1
+    }
+}
+
+checkPowerShellVersion
 installScoopPackages
 addToProfile
 Write-Host "Setup successful. Restart your terminal or run '. `$PROFILE' to use new config." -ForegroundColor Green
