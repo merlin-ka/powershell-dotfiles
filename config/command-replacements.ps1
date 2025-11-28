@@ -1,6 +1,4 @@
-function Test-Command($commandName) {
-    return $null -ne (Get-Command $commandName -ErrorAction Ignore)
-}
+. $PSScriptRoot\..\lib.ps1
 
 if (Test-Command eza) {
     Remove-Alias ls

@@ -1,3 +1,5 @@
+. $PSScriptRoot\..\lib.ps1
+
 function Read-Confirmation($prompt) {
     while ($true) {
         Write-Host "$prompt $($PSStyle.Dim)[y/n]$($PSStyle.Reset) " -NoNewline
@@ -10,10 +12,6 @@ function Read-Confirmation($prompt) {
         
         Write-Host "Invalid input." -ForegroundColor Red
     }
-}
-
-function Test-Command($commandName) {
-    return $null -ne (Get-Command $commandName -ErrorAction Ignore)
 }
 
 function Install-Scoop {
@@ -43,7 +41,7 @@ function Install-ScoopPackages {
         return
     }
     
-    $programs = "eza", "bat", "less"
+    $programs = "eza", "bat", "less", "fzf", "fd"
     $missingPrograms = [System.Collections.Generic.List[string]]::new()
 
     foreach ($p in $programs) {
