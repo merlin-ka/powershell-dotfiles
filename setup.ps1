@@ -1,4 +1,4 @@
-. $PSScriptRoot\..\lib.ps1
+. $PSScriptRoot\lib.ps1
 
 function Read-Confirmation($prompt) {
     while ($true) {
@@ -45,7 +45,7 @@ function Install-ScoopPackages {
     $missingPrograms = [System.Collections.Generic.List[string]]::new()
 
     foreach ($p in $programs) {
-        if (!(isCommandAvailable $p)) {
+        if (!(Test-Command $p)) {
             $missingPrograms.Add($p)
         }
     }
