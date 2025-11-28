@@ -1,13 +1,13 @@
-function Get-CommandAvailable($commandName) {
+function Test-Command($commandName) {
     return $null -ne (Get-Command $commandName -ErrorAction Ignore)
 }
 
-if (Get-CommandAvailable eza) {
+if (Test-Command eza) {
     Remove-Alias ls
     function ls { eza -a $args }
     function ll { eza -a -l $args }
 }
 
-if (Get-CommandAvailable bat) {
+if (Test-Command bat) {
     Set-Alias cat bat
 }

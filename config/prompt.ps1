@@ -1,5 +1,5 @@
 function prompt {
-    $dir = (Get-Location).ProviderPath
+    $dir = $pwd.ProviderPath
     if ($dir.StartsWith($HOME)) {
         $dir = "~" + $dir.Substring($HOME.Length)
     }

@@ -1,7 +1,7 @@
-function confirm($prompt) {
+function Read-Confirmation($prompt) {
     while ($true) {
-        $Host.UI.Write($prompt + " $($PSStyle.Dim)[y/n]$($PSStyle.Reset) ")
-        $choice = $Host.UI.ReadLine()
+        Write-Host "$prompt $($PSStyle.Dim)[y/n]$($PSStyle.Reset) " -NoNewline
+        $choice = Read-Host
         
         switch ($choice) {
             "y" { return $true }
@@ -12,23 +12,23 @@ function confirm($prompt) {
     }
 }
 
-function isCommandAvailable($commandName) {
+function Test-Command($commandName) {
     return $null -ne (Get-Command $commandName -ErrorAction Ignore)
 }
 
-function installScoop {
+function Install-Scoop {
     # From https://github.com/ScoopInstaller/Scoop#installation
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
     Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
-function checkScoopInstalled {
-    if (!(isCommandAvailable scoop)) {
+function Test-ScoopInstalled {
+    if (!(Test-Command scoop)) {
         Write-Host "scoop package manager not found." -ForegroundColor Yellow
         Write-Host "scoop is used to install optional programs like 'bat' as an alternative for 'cat'." -ForegroundColor Yellow
         
-        if (confirm "Install scoop?") {
-            Write-Host "Installing scoop"
+        if (Read-Confirmation "Install scoop?") {
+            Install-Scoop
         }
         else {
             return $false
@@ -38,8 +38,8 @@ function checkScoopInstalled {
     return $true
 }
 
-function installScoopPackages {
-    if (!(checkScoopInstalled)) {
+function Install-ScoopPackages {
+    if (!(Test-ScoopInstalled)) {
         return
     }
     
@@ -54,7 +54,7 @@ function installScoopPackages {
 
     if ($missingPrograms.Count -ne 0) {
         Write-Host "The following optional programs are not installed:" ($missingPrograms -join ", ") -ForegroundColor Yellow
-        $install = confirm "Install with scoop?"
+        $install = Read-Confirmation "Install with scoop?"
 
         if ($install) {
             scoop install $missingPrograms
@@ -62,7 +62,7 @@ function installScoopPackages {
     }
 }
 
-function addToProfile {
+function Register-ConfigInProfile {
     $sourceLine = '. $HOME\.powershell\profile.ps1'
 
     if (Test-Path $PROFILE) {
@@ -79,7 +79,7 @@ function addToProfile {
     Write-Host "Added to $PROFILE"
 }
 
-function checkPowerShellVersion {
+function Test-PowerShellVersion {
     $ver = $PSVersionTable.PSVersion.Major * 100 + $PSVersionTable.PSVersion.Minor
     if ($ver -lt 702) {
         $verStr = $PSVersionTable.PSVersion.ToString()
@@ -89,7 +89,7 @@ function checkPowerShellVersion {
     }
 }
 
-checkPowerShellVersion
-installScoopPackages
-addToProfile
+Test-PowerShellVersion
+Install-ScoopPackages
+Register-ConfigInProfile
 Write-Host "Setup successful. Restart your terminal or run '. `$PROFILE' to use new config." -ForegroundColor Green
